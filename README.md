@@ -8,6 +8,7 @@
   실상 카메라 : Python - yolo AI object detection 
   UI : JAVA
 
+세부사항은 보고서 참조(무인 고열자 탐지 시스템.hwp)
 
 # 실행구조 : 
 
