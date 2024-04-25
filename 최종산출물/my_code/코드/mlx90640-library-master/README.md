@@ -1,157 +1,26 @@
-# mlx90640-library
 
-This Python wrapper of the Melexis MLX90640 library was written for use with the Raspberry Pi and our [MLX90640 breakout](https://shop.pimoroni.com/products/mlx90640-thermal-camera-breakout). While you are free to use this software with whatever combination of device you choose, we unfortunately lack the resources to test and support any other combinations.
+12171588 김민석
 
-** Warning: ** We have reason to believe that using this library in conjunction with a Jetson Nano could damage your device, please see: https://github.com/pimoroni/mlx90640-library/issues/38
-
-## Raspberry Pi Users
-
-** EXPERIMENTAL **
-
-This port uses either generic Linux I2C or the  bcm2835 library.
-Upon building, the mode is set with the I2C_MODE property, i.e. `make I2C_MODE=LINUX` or `make I2C_MODE=RPI`. The default is LINUX, without the need for the bcm2835 library or root access.
-
-### Generic Linux I2C Mode
-
-Make sure the Linux I2C dev library is installed:
-
-```text
-sudo apt-get install libi2c-dev
-```
-
-To get the best out of your sensor you should modify `/boot/config.txt` and change your I2C baudrate.
-
-The fastest rate recommended for compatibility with other sensors is 400kHz. This is compatible with SMBus devices:
-
-```text
-dtparam=i2c1_baudrate=400000
-```
-
-This will give you a framerate of - at most - 8FPS.
-
-If you're just using the MLX90640 and, for example, the 1.12" OLED, you can safely use 1MHz:
-
-```text
-dtparam=i2c1_baudrate=1000000
-```
-
-This will give you a framerate of - at most - 32FPS.
-
-Now build the MLX90640 library and examples in LINUX I2C mode:
-
-```text
-make clean
-make I2C_MODE=LINUX
-```
-
-### BCM2835 Library Mode
-
-To use the bcm2835 library, install like so:
+1. 열화상카메라 모듈에 대한 코드들 입니다. (개발 운영체제 : 리눅스)
+   functions, headers 폴더안에는 열화상 카메라에서 지원하는 API 및 함수들이 정의되어 있습니다.
+   이 부분은 제공받은 소스들 입니다.
 
 
-```text
-make bcm2835
-```
+2. examples/src에 제가 구현한 코드들이 들어 있습니다. 필요없는 파일은 전부 삭제했습니다.
+   실행되는 모든 코드들은 examples/src에 있습니다.
 
-Or, step by step:
 
-```text
-wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.55.tar.gz
-tar xvfz bcm2835-1.55.tar.gz
-cd bcm2835-1.55
-./configure
-make
-sudo make install
-```
+3. 실제 기능 구현에 사용된 코드는 Total_test.cpp 와 real_speaker.cpp입니다.
+   server.cpp는 대현선배님 서버쪽과의 통신을 자체테스트 하기 위해 만들었습니다.
+   UIclient.cpp는 UI쪽과의 통신을 자체테스트 하기 위해 만들었습니다.
 
-### Dependencies
 
-libav for `video` example:
+4. Total_test.cpp를 실행하는 방법은 다음과 같습니다.
 
-```text
-sudo apt-get install libavutil-dev libavcodec-dev libavformat-dev
-```
+   1- examples/src로 이동합니다.
+   2- Total_test.cpp파일을 같은위치의 test.cpp로 복사합니다.
+   3- README.txt가 있는 위치에서 make를 수행합니다.
+   4- 실행파일은 examples/ 에 생성됩니다.
 
-SDL2 for `sdlscale` example:
 
-```text
-sudo apt install libsdl2-dev
-```
-
-# Building
-
-After installing the dependencies, you can build the library. Build-modes are:
-
-* `make` or `make all`: build the library and all dependencies. Default is to use standard linux I2C-Drivers, specify Raspberry Pi driver with `make I2C_MODE=RPI`
-* `make examples`: only build examples, see below
-* `sudo make install`: install libraries and headers into `$PREFIX`, default is `/usr/local`
-
-Afterwards you can run the examples or build the python binding, see readme in the subfolder.
-If you built the examples or library using the native bcm2835 I2C-Driver, you need to run all applications and examples as root.
-Hence, `sudo examples/<exampleame>` for one of the examples listed below, or without `sudo` when using the standard Linux driver.
-
-# Examples
-## fbuf
-
-```
-make examples/fbuf
-sudo examples/fbuf
-```
-
-This example uses direct-to-framebuffer rendering and black-blue-green-yellow-red-purple-white false colouring.
-
-If you gave issues with the output image, set "`IMAGE_SCALE`" to a smaller number.
-
-## interp
-
-```
-make examples/interp
-sudo examples/interp
-```
-
-This example uses direct-to-framebuffer rendering and black-blue-green-yellow-red-purple-white false colouring.
-
-It also has 2x bicubic resize filter.
-
-If you have issues with the output image, set "`IMAGE_SCALE`" to a smaller number.
-
-## test
-
-```
-make examples/test
-sudo examples/test
-```
-
-This example draws out to the console using ANSI colours and the full block char.
-
-To see the actual temperature values, change "`FMT_STRING`" from the block char to the float format.
-
-## step
-
-```
-make examples/step
-sudo examples/step
-```
-
-Attempt to run in step by step mode (experimental)
-
-## sdlscale
-
-Displays the MLX90640 sensor full-screen using hardware acceleration in SDL2.
-
-Hit Spacebar to change from aspect-ratio correct to full-screen-stretched modes.
-
-Hit Escape to exit.
-
-```
-make examples/sdlscale
-sudo examples/sdlscale
-```
-
-Requires SDL2 libraries:
-
-```
-sudo apt install libsdl2-dev
-```
-
-On Raspbian Lite you may wish to build SDL2 from source with X support disabled to avoid pulling in ~200MB of dependencies. Before configuring/compiling ensure you have `libudev-dev` installed for input support.
+5. 이외의 코드들은 gcc에 -o -pthread -lwiringPI 옵션을 주어서 컴파일을 진행하면 됩니다.
